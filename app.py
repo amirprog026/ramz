@@ -10,7 +10,7 @@ confs.read('conf.ini')
 app.secret_key =  str(confs["APP"]["SECRET"])
 # Generate a Fernet key and use it to create a Fernet instance
 key = bytes.fromhex(str(confs["APP"]["KEY"]))
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO,filename="/var/log/encryptor.log")
 cipher_suite = Fernet(key)
 
 API_TOKEN = confs["APP"]["TOKEN"]
@@ -21,6 +21,7 @@ def token_required(f):
     def decorated_function(*args, **kwargs):
         token = request.headers.get('Authorization')
         if token != f"Bearer {API_TOKEN}":
+            logging.critical(f"Forbidden access from {request.remote_addr}")
             abort(403, description="Forbidden: Invalid API Token")
         return f(*args, **kwargs)
     return decorated_function
@@ -33,6 +34,7 @@ def encrypt_text():
     if not data:
         return jsonify({"error": "Text is required"}), 400
     encrypted_text = cipher_suite.encrypt(data.encode())
+    logging.info(f"Cipher request done from {request.remote_addr}")
     return jsonify({"encrypted_text": encrypted_text.decode()}), 200
 
 # Route to decrypt text
@@ -45,6 +47,7 @@ def decrypt_text():
         return jsonify({"error": "Encrypted text is required"}), 400
     try:
         decrypted_text = cipher_suite.decrypt(data.encode()).decode()
+        logging.info(f"Decrypt request done from {request.remote_addr}")
         return jsonify({"decrypted_text": decrypted_text}), 200
     except Exception as e:
         return jsonify({"error": "Invalid encrypted text"}), 400
