@@ -26,7 +26,7 @@ This project is a Flask-based API for encrypting and decrypting text using the F
 You need to make your own `conf.ini` file:
 ```
 [APP]
-KEY = your_32B_key  
+KEY = your_32B_key(hex)  
 TOKEN = your_api_token           
 SECRET = your_secret_key        
 ```
