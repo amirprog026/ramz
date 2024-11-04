@@ -50,7 +50,7 @@ curl -X POST http://127.0.0.1:5000/api/decrypt \
   -d '{"encrypted_text": "your_encrypted_text_here"}'
 
 ```
-##Written By
+
 ## Acknowledgements
 
  - [Written By Amir Ahmadabadiha](https://ir.linkedin.com/in/amir-ahmadabadiha-259113175)
