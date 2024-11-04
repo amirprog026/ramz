@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Encrypt Text</title>
+</head>
+<body>
+    <h1>Encrypt Text</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.text.label }}<br>
+            {{ form.text(size=50) }}<br>
+            {% for error in form.text.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.submit() }}
+        </div>
+    </form>
+    {% if encrypted_result %}
+        <h2>Encrypted Text:</h2>
+        <p>{{ encrypted_result }}</p>
+    {% endif %}
+</body>
+</html>
