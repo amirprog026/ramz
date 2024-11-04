@@ -1,17 +1,19 @@
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify, abort,render_template
 from cryptography.fernet import Fernet
 from functools import wraps
 from forms import EncryptForm
-
+import configparser,logging
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  
-
+ 
+confs=configparser.ConfigParser()
+confs.read('conf.ini')
+app.secret_key =  str(confs["APP"]["SECRET"])
 # Generate a Fernet key and use it to create a Fernet instance
-key = Fernet.generate_key()
+key = bytes.fromhex(str(confs["APP"]["KEY"]))
+logging.basicConfig(level=logging.DEBUG)
 cipher_suite = Fernet(key)
 
-# Set your API token
-API_TOKEN = 'your_api_token'
+API_TOKEN = confs["APP"]["TOKEN"]
 
 # Decorator to check API token
 def token_required(f):
@@ -38,6 +40,7 @@ def encrypt_text():
 @token_required
 def decrypt_text():
     data = request.json.get("encrypted_text")
+    
     if not data:
         return jsonify({"error": "Encrypted text is required"}), 400
     try:
@@ -56,5 +59,3 @@ def encrypt_form():
         encrypted_result = cipher_suite.encrypt(text_to_encrypt.encode()).decode()
     return render_template('encrypt.html', form=form, encrypted_result=encrypted_result)
 
-if __name__ == '__main__':
-    app.run(debug=True)
