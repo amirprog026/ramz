@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, abort,render_template
 from cryptography.fernet import Fernet
 from functools import wraps
-from forms import EncryptForm
+from forms import *
 import configparser,logging
 app = Flask(__name__)
  
