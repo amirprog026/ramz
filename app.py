@@ -61,4 +61,17 @@ def encrypt_form():
         text_to_encrypt = form.text.data
         encrypted_result = cipher_suite.encrypt(text_to_encrypt.encode()).decode()
     return render_template('encrypt.html', form=form, encrypted_result=encrypted_result)
+ 
+@app.route('/decrypt', methods=['GET', 'POST'])
+def decrypt():
+    form = DecryptForm()
+    if form.validate_on_submit():
+        encrypted_text = form.encrypted_text.data
+        try:
+            decrypted_text = cipher_suite.decrypt(encrypted_text.encode()).decode()
+            flash(f"Decrypted Text: {decrypted_text}", "success")
+        except Exception:
+            flash("Invalid encrypted text or decryption failed", "danger")
+        return redirect(url_for('decrypt'))
+    return render_template('decrypt.html', form=form)
 
